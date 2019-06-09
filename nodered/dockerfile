@@ -3,8 +3,6 @@ FROM nodered/node-red-docker:rpi
 LABEL description="NodeRed"
 LABEL version="1.0"
 
-RUN apt-get update 
-
 RUN npm install node-red-dashboard
 
 RUN npm install node-red-contrib-pushover
