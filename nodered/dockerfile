@@ -1,4 +1,4 @@
-FROM nodered/node-red-docker:rpi
+FROM nodered/node-red
 
 LABEL description="NodeRed"
 LABEL version="1.0"
