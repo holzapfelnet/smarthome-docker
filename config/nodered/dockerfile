@@ -8,3 +8,5 @@ RUN npm install node-red-dashboard
 RUN npm install node-red-contrib-pushover
 
 RUN npm install node-red-node-openweathermap
+
+RUN npm install node-red-node-ui-list
