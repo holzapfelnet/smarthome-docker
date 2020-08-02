@@ -114,6 +114,8 @@ services:
             - "3000:3000"
         networks:
             - smarthome-network
+        environment:
+           GF_SECURITY_ALLOW_EMBEDDING: "true"
 
     telegraf:
         restart: always
