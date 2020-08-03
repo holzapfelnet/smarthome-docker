@@ -116,6 +116,7 @@ services:
             - smarthome-network
         environment:
            GF_SECURITY_ALLOW_EMBEDDING: "true"
+           GF_AUTH_ANONYMOUS_ENABLED: "true"
 
     telegraf:
         restart: always
