@@ -36,6 +36,8 @@ services:
             - ~/smarthome-docker/container/mqtt/config/:/mosquitto/config/
             - ~/smarthome-docker/container/mqtt/log/:/mosquitto/log/
             - ~/smarthome-docker/container/mqtt/data/:/mosquitto/data/
+        environment:
+            TZ: Europe/Berlin
 
     nodered:
         restart: always
@@ -61,7 +63,7 @@ services:
         networks:
             - smarthome-network
         environment:
-            TZ: Europe/Amsterdam
+            TZ: Europe/Berlin
         privileged: true
         devices:
             - /dev/ttyACM0:/dev/ttyACM0
@@ -79,7 +81,7 @@ services:
              - PUID=1000
              - HOMEBRIDGE_CONFIG_UI=1
              - HOMEBRIDGE_CONFIG_UI_PORT=8080
-             - TZ=Europe/Amsterdam
+             - TZ=Europe/Berlin
         depends_on:
             - "mqtt"
 
@@ -101,6 +103,7 @@ services:
             INFLUXDB_ADMIN_USER: admin
             INFLUXDB_ADMIN_PASSWORD: secret
             INFLUXDB_HTTP_FLUX_ENABLED: "true"
+            TZ: Europe/Berlin
         
     grafana:
         restart: always
@@ -117,6 +120,9 @@ services:
         environment:
            GF_SECURITY_ALLOW_EMBEDDING: "true"
            GF_AUTH_ANONYMOUS_ENABLED: "true"
+           TZ: Europe/Berlin
+        depends_on:
+            - "influxdb"
 
     telegraf:
         restart: always
@@ -126,6 +132,11 @@ services:
             - ~/smarthome-docker/container/telegraf:/etc/telegraf
         networks:
             - smarthome-network
+        environment:
+            TZ: Europe/Berlin
+        depends_on:
+            - "mqtt"
+            - "influxdb"
 
     deconz:
         restart: always
@@ -147,7 +158,7 @@ services:
             DECONZ_DEVICE: /dev/ttyACM0
             DECONZ_WEB_PORT: 4000
             DECONZ_WS_PORT: 4443
-            TZ: Europe/Amsterdam
+            TZ: Europe/Berlin
 
 networks:
     smarthome-network:
