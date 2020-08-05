@@ -51,6 +51,8 @@ services:
             - ~/smarthome-docker/container/nodered/data/:/data/
         networks:
             - smarthome-network
+        environment:
+            TZ: Europe/Berlin
         depends_on:
             - "mqtt"
 
