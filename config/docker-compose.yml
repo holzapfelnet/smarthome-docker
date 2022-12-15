@@ -1,26 +1,6 @@
 version: '3'
 
 services:
-    fhem:
-        restart: always
-        ports:
-            - "8083:8083"
-            - "7072:7072"
-        image: fhem/fhem:latest
-        volumes:
-            - ~/smarthome-docker/container/fhem/:/opt/fhem/
-        networks:
-            - smarthome-network
-        environment:
-            FHEM_UID: 1000
-            FHEM_GID: 1000
-            TIMEOUT: 10
-            RESTART: 1
-            TELNETPORT: 7072
-            TZ: Europe/Berlin
-        depends_on:
-            - "mqtt"
-
     mqtt:
         restart: always
         expose:
@@ -43,8 +23,12 @@ services:
         restart: always
         expose:
             - "1880"
+            - "2048"
+            - "2049"
         ports:
             - "1880:1880"
+            - "2048:2048"
+            - "2049:2049"
         build: ./nodered
         user: "1000:1000"
         volumes:
@@ -53,22 +37,6 @@ services:
             - smarthome-network
         environment:
             TZ: Europe/Berlin
-        depends_on:
-            - "mqtt"
-
-    zigbee2mqtt:
-        restart: always
-        image: koenkk/zigbee2mqtt
-        volumes:
-            - ~/smarthome-docker/container/zigbee2mqtt/data:/app/data
-            - /run/udev:/run/udev:ro
-        networks:
-            - smarthome-network
-        environment:
-            TZ: Europe/Berlin
-        privileged: true
-        devices:
-            - /dev/ttyACM0:/dev/ttyACM0
         depends_on:
             - "mqtt"
 
@@ -161,6 +129,40 @@ services:
             DECONZ_WEB_PORT: 4000
             DECONZ_WS_PORT: 4443
             TZ: Europe/Berlin
+
+    redis:
+        image: redis
+        ports:
+          - "6379:6379"
+        volumes:
+          - ~/smarthome-docker/container/redis/data:/data
+        networks:
+          - smarthome-network
+        entrypoint: redis-server --appendonly yes
+        restart: always
+    
+    heimdall: 
+        image: lscr.io/linuxserver/heimdall
+        container_name: heimdall
+        environment:
+           - PUID=1000
+           - PGID=1000
+           - TZ=Europe/Berlin
+        volumes:
+           - ~/smarthome-docker/container/heimdall/config:/config
+        ports:
+           - 443:443
+
+    iobroker:
+        privileged: true
+        restart: always
+        image: buanet/iobroker:latest
+        container_name: iobroker
+        hostname: iobroker
+        ports:
+           - "8081:8081"
+        volumes:
+           - ~/smarthome-docker/container/iobrokerdata:/opt/iobroker
 
 networks:
     smarthome-network:
